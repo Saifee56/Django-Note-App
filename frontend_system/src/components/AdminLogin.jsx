@@ -7,6 +7,7 @@ function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,14 +26,12 @@ function AdminLogin() {
 
       const { tokens, message } = response.data;
 
-      // Set tokens in cookies
-      Cookies.set('access_token', tokens.access, { expires: 1 }); // expires in 1 day
-      Cookies.set('refresh_token', tokens.refresh, { expires: 7 }); // expires in 7 days
+      Cookies.set('access_token', tokens.access, { expires: 1 }); 
+      Cookies.set('refresh_token', tokens.refresh, { expires: 7 }); 
 
       setMessage(message);
 
-      // Redirect after login success
-      navigate('/admin-dashboard'); // Adjust this route as needed
+      navigate('/admin-dashboard'); 
     } catch (error) {
       console.error(error);
       if (error.response && error.response.data?.error) {

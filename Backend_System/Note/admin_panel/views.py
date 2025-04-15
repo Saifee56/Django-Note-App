@@ -38,8 +38,8 @@ class AdminPanelViewSet(viewsets.ViewSet):
             "notes": serializer.data
         }, status=status.HTTP_200_OK)
     
-    @action(detail=True,methods=['delete'],url_path='delete-note')
-    def delete(self,request,pk=None):
+    @action(detail=True,methods=['delete'],url_path='delete')
+    def delete_note(self,request,pk=None):
         try:
             note = Note.objects.get(pk=pk, user=request.user)
         except Note.DoesNotExist:

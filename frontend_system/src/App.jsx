@@ -12,6 +12,7 @@ import DeleteNote from './components/DeleteNote';
 import AdminLogin from './components/AdminLogin';
 import AdminDashboard from './components/AdminDashboard';
 import UserActivityHistory from './components/UserActivityHistory';
+import AdminNotesUsername from './components/AdminNotesViewUser';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/admin-login" element={<AdminLogin />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/user-activity/:username" element={<UserActivityHistory />} />
+        <Route path="/admin-note/:username" element={<AdminNotesUsername />} />
       </Routes>
     </Router>
   );

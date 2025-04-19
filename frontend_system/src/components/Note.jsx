@@ -1,48 +1,73 @@
-// src/components/Notes.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Notes = () => {
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Manage Your Notes</h2>
-      <div>
-        <Link to="/create-note" style={styles.link}>Create Note</Link>
-      </div>
-      <div>
-        <Link to="/update-note" style={styles.link}>Update Note</Link>
-      </div>
-      <div>
-        <Link to="/get-all-notes" style={styles.link}>View All Notes</Link>
-      </div>
-      <div>
-        <Link to="/delete" style={styles.link}>Delete Note</Link>
+    <div style={styles.page}>
+      <header style={styles.header}>
+        <h1 style={styles.title}>Notes Dashboard</h1>
+        <p style={styles.subtitle}>Manage all your notes in one place</p>
+      </header>
+
+      <div style={styles.grid}>
+        <Card to="/create-note" label="Create Note" />
+        <Card to="/update-note" label="Update Note" />
+        <Card to="/get-all-notes" label="View All Notes" />
+        <Card to="/delete" label="Delete Note" />
+        <Card to="/admin-login" label="Login As Admin" />
       </div>
     </div>
   );
 };
 
-// Inline styles
+const Card = ({ to, label }) => (
+  <Link to={to} style={styles.card}>
+    <span>{label}</span>
+  </Link>
+);
+
 const styles = {
-  container: {
+  page: {
+    backgroundColor: '#f0f6ff',
+    minHeight: '100vh',
+    padding: '40px 20px',
+    fontFamily: 'Segoe UI, sans-serif',
+  },
+  header: {
     textAlign: 'center',
-    marginTop: '50px',
+    marginBottom: '40px',
+  },
+  title: {
+    fontSize: '2.5rem',
+    color: '#003366',
+    marginBottom: '10px',
+  },
+  subtitle: {
+    color: '#666',
+    fontSize: '1rem',
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '20px',
+    maxWidth: '800px',
+    margin: '0 auto',
+  },
+  card: {
+    backgroundColor: '#ffffff',
     padding: '20px',
-    backgroundColor: '#f5f5f5',
-    borderRadius: '8px',
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-  },
-  heading: {
-    color: '#4CAF50',
-    fontSize: '2.5em',
-    marginBottom: '15px',
-  },
-  link: {
-    color: '#4CAF50',
-    textDecoration: 'none',
+    borderRadius: '10px',
+    textAlign: 'center',
+    color: '#007bff',
     fontWeight: 'bold',
-    display: 'block',
-    marginBottom: '15px',
+    fontSize: '1.1rem',
+    textDecoration: 'none',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+    transition: 'all 0.3s ease',
+  },
+  cardHover: {
+    backgroundColor: '#007bff',
+    color: '#fff',
   },
 };
 

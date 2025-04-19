@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . models import Note
+from . models import Note,SharedNote
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
@@ -53,3 +53,17 @@ class UserLoginSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Both Username and Password are required")
         
         return attrs
+    
+class SharedNoteSerializer(serializers.ModelSerializer):
+    shared_with = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=User.objects.all()
+    )
+    access_type = serializers.ChoiceField(
+        choices=[('view','view'),('edit','edit')]
+    )
+
+    class Meta:
+        model = SharedNote
+        fields = ['note', 'shared_with', 'access_type']
+

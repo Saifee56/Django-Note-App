@@ -14,7 +14,6 @@ const AdminDashboard = () => {
       setMessage('No access token found.');
       return;
     }
-
     fetchAllNotes();
     fetchAllActivities();
   }, []);
@@ -41,8 +40,10 @@ const AdminDashboard = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const activitiesMap = response.data.reduce((acc, activity) => {
-        if (!acc[activity.user]) acc[activity.user] = [];
-        acc[activity.user].push(activity);
+        if (activity.activity_type !== 'view_all_notes') {
+          if (!acc[activity.user]) acc[activity.user] = [];
+          acc[activity.user].push(activity);
+        }
         return acc;
       }, {});
       setActivitiesByUser(activitiesMap);
@@ -67,123 +68,125 @@ const AdminDashboard = () => {
   };
 
   const toggleUser = (username) => {
-    if (expandedUsers.includes(username)) {
-      setExpandedUsers(expandedUsers.filter((user) => user !== username));
-    } else {
-      setExpandedUsers([...expandedUsers, username]);
-    }
+    setExpandedUsers((prev) =>
+      prev.includes(username)
+        ? prev.filter((u) => u !== username)
+        : [...prev, username]
+    );
   };
 
   const styles = {
     container: {
-      padding: '40px',
+      padding: '30px',
       fontFamily: 'Segoe UI, sans-serif',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#1e1e2f',
+      color: '#f5f5f5',
       minHeight: '100vh',
-      color: '#000000',
+    },
+    heading: {
+      fontSize: '1.8rem',
+      fontWeight: 'bold',
+      marginBottom: '30px',
+      textAlign: 'center',
     },
     userCard: {
-      backgroundColor: '#f0f0f0',
-      color: '#000000',
-      padding: '18px',
-      marginBottom: '20px',
+      backgroundColor: '#292943',
+      padding: '15px 20px',
       borderRadius: '10px',
+      marginBottom: '15px',
       cursor: 'pointer',
-      fontSize: '1.1rem',
       fontWeight: '600',
-      boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+      fontSize: '1.1rem',
       transition: 'background 0.3s',
     },
-    cardContainer: {
+    noteCard: {
+      backgroundColor: '#2e2e3e',
+      padding: '20px',
+      borderRadius: '10px',
+      width: '300px',
+      marginBottom: '15px',
+      boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+    },
+    activityCard: {
+      backgroundColor: '#34344e',
+      padding: '15px',
+      borderRadius: '10px',
+      width: '300px',
+      marginBottom: '15px',
+      boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+    },
+    section: {
+      marginTop: '15px',
+      marginBottom: '10px',
+      fontSize: '1.05rem',
+      fontWeight: '600',
+      color: '#c9c9ff',
+    },
+    grid: {
       display: 'flex',
       flexWrap: 'wrap',
       gap: '20px',
-      marginTop: '10px',
-    },
-    noteCard: {
-      backgroundColor: '#ffffff',
-      padding: '16px',
-      width: '300px',
-      borderRadius: '8px',
-      border: '1px solid #ddd',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.08)',
-      color: '#000000',
-    },
-    activityCard: {
-      backgroundColor: '#ffffff',
-      padding: '16px',
-      width: '300px',
-      borderRadius: '8px',
-      border: '1px solid #ccc',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      color: '#000000',
-      fontSize: '0.95rem',
+      marginBottom: '25px',
     },
     deleteBtn: {
-      backgroundColor: '#ff4d4f',
-      color: '#ffffff',
+      backgroundColor: '#e63946',
+      color: '#fff',
+      padding: '8px 12px',
       border: 'none',
-      padding: '8px 14px',
       borderRadius: '5px',
       cursor: 'pointer',
       marginTop: '10px',
-      fontWeight: '500',
-      transition: 'background 0.2s ease-in-out',
+      fontWeight: 'bold',
     },
-    sectionTitle: {
-      marginTop: '20px',
-      marginBottom: '10px',
-      fontWeight: '600',
-      fontSize: '1.05rem',
-      color: '#333333',
-    },
-    activityContainer: {
-      display: 'flex',
-      flexWrap: 'wrap',
-      gap: '20px',
-      marginTop: '10px',
+    message: {
+      color: '#ffb703',
+      fontSize: '1rem',
+      marginBottom: '20px',
+      textAlign: 'center',
     },
   };
 
   return (
     <div style={styles.container}>
-      <h2>Admin Dashboard - User Notes & Activities</h2>
-      {message && <p style={{ color: 'red' }}>{message}</p>}
+      <div style={styles.heading}>Admin Dashboard - User Notes & Activities</div>
+      {message && <p style={styles.message}>{message}</p>}
       {Object.keys(notesByUser).map((username) => (
         <div key={username}>
           <div style={styles.userCard} onClick={() => toggleUser(username)}>
-            <strong>{username}</strong>
+            👤 {username}
           </div>
 
           {expandedUsers.includes(username) && (
-            <div>
-              <div style={styles.sectionTitle}>📝 Notes</div>
-              {notesByUser[username].length === 0 ? (
-                <p style={{ marginLeft: '10px' }}>No notes available.</p>
-              ) : (
-                notesByUser[username].map((note) => (
-                  <div key={note.id} style={styles.noteCard}>
-                    <p><strong>Title:</strong> {note.title}</p>
-                    <p><strong>Content:</strong> {note.content}</p>
-                    <button style={styles.deleteBtn} onClick={() => handleDeleteNote(note.id)}>Delete</button>
-                  </div>
-                ))
-              )}
+            <>
+              <div style={styles.section}>📝 Notes</div>
+              <div style={styles.grid}>
+                {notesByUser[username].length === 0 ? (
+                  <p>No notes available.</p>
+                ) : (
+                  notesByUser[username].map((note) => (
+                    <div key={note.id} style={styles.noteCard}>
+                      <p><strong>Title:</strong> {note.title}</p>
+                      <p><strong>Content:</strong> {note.content}</p>
+                      <button style={styles.deleteBtn} onClick={() => handleDeleteNote(note.id)}>Delete</button>
+                    </div>
+                  ))
+                )}
+              </div>
 
-              <div style={styles.sectionTitle}>📋 Activities</div>
-              {activitiesByUser[username]?.length > 0 ? (
-                <div style={styles.activityContainer}>
-                  {activitiesByUser[username].map((activity, idx) => (
+              <div style={styles.section}>📋 Activities</div>
+              <div style={styles.grid}>
+                {activitiesByUser[username]?.length > 0 ? (
+                  activitiesByUser[username].map((activity, idx) => (
                     <div key={idx} style={styles.activityCard}>
                       <p><strong>Type:</strong> {activity.activity_type}</p>
                       <p><strong>Time:</strong> {new Date(activity.timestamp).toLocaleString()}</p>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p style={{ marginLeft: '10px' }}>No activity recorded.</p>
-              )}
-            </div>
+                  ))
+                ) : (
+                  <p>No activity recorded.</p>
+                )}
+              </div>
+            </>
           )}
         </div>
       ))}

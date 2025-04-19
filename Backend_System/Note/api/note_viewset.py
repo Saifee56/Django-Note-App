@@ -2,8 +2,8 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from .serializers import NoteSerializer
-from .models import Note
+from .serializers import NoteSerializer,SharedNoteSerializer
+from .models import Note,SharedNote
 from admin_panel.models import UserActivity
 
 class NoteViewset(viewsets.ViewSet):
@@ -22,7 +22,12 @@ class NoteViewset(viewsets.ViewSet):
     @action(detail=True, methods=['put'], url_path='update')
     def update_note(self, request, pk=None):
         try:
-            note = Note.objects.get(pk=pk, user=request.user)
+            note = Note.objects.get(pk=pk)
+            if note.user != request.user:
+                # Check for shared edit access
+                shared = SharedNote.objects.filter(note=note, shared_with=request.user, access_type='edit').exists()
+                if not shared:
+                    return Response({"error": "You do not have permission to edit this note."}, status=status.HTTP_403_FORBIDDEN)
         except Note.DoesNotExist:
             return Response({"error": "Note not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -30,7 +35,6 @@ class NoteViewset(viewsets.ViewSet):
         if serializer.is_valid():
             serializer.save()
             UserActivity.objects.create(user=request.user, activity_type='update_note')
-
             return Response({"message": "Note updated successfully", "note": serializer.data}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -48,10 +52,12 @@ class NoteViewset(viewsets.ViewSet):
     
     @action(detail=False, methods=['get'], url_path='get-all')
     def get_all_notes(self, request):
-        notes = Note.objects.filter(user=request.user)
-        serializer = NoteSerializer(notes, many=True)
-        UserActivity.objects.create(user=request.user, activity_type='view_all_notes')
+        user_notes = Note.objects.filter(user=request.user)
+        shared_notes = Note.objects.filter(shared_notes__shared_with=request.user)
+        all_notes = user_notes | shared_notes
+        all_notes = all_notes.distinct()
 
+        serializer = NoteSerializer(all_notes, many=True)
         return Response({"notes": serializer.data}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['get'], url_path='detail')
@@ -65,3 +71,20 @@ class NoteViewset(viewsets.ViewSet):
         UserActivity.objects.create(user=request.user, activity_type='view_single_note')
 
         return Response({"note": serializer.data}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'], url_path='share')
+    def share_note(self, request, pk=None):
+        try:
+            note = Note.objects.get(pk=pk, user=request.user)
+        except Note.DoesNotExist:
+            return Response({"error": "Note not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        data = request.data.copy()
+        data['note'] = note.id
+
+        serializer = SharedNoteSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            UserActivity.objects.create(user=request.user, activity_type='share_note')
+            return Response({"message": "Note shared successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

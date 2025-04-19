@@ -7,7 +7,8 @@ class UserActivity(models.Model):
         ('login','Login'),
         ('create_note','Create_Note'),
         ('update_note','Update_Note'),
-        ('delete_note','Delete_Note')
+        ('delete_note','Delete_Note'),
+        ('share_note','Share_Note')
     ]
     user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='activities')
     activity_type=models.CharField(max_length=50,choices=ACTIVITY_CHOICES)

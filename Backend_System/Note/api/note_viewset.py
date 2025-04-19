@@ -47,9 +47,8 @@ class NoteViewset(viewsets.ViewSet):
 
         note.delete()
         UserActivity.objects.create(user=request.user, activity_type='delete_note')
-
         return Response({"message": "Note deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
-    
+
     @action(detail=False, methods=['get'], url_path='get-all')
     def get_all_notes(self, request):
         user_notes = Note.objects.filter(user=request.user)
@@ -63,13 +62,18 @@ class NoteViewset(viewsets.ViewSet):
     @action(detail=True, methods=['get'], url_path='detail')
     def get_single_note(self, request, pk=None):
         try:
+            # Try owner first
             note = Note.objects.get(pk=pk, user=request.user)
         except Note.DoesNotExist:
-            return Response({"error": "Note not found"}, status=status.HTTP_404_NOT_FOUND)
+            # If not owner, check shared
+            try:
+                shared_note = SharedNote.objects.get(note_id=pk, shared_with=request.user)
+                note = shared_note.note
+            except SharedNote.DoesNotExist:
+                return Response({"error": "Note not found or access denied"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = NoteSerializer(note)
         UserActivity.objects.create(user=request.user, activity_type='view_single_note')
-
         return Response({"note": serializer.data}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['post'], url_path='share')

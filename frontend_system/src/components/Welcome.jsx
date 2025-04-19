@@ -5,42 +5,62 @@ import { Link } from 'react-router-dom';
 const Welcome = () => {
   return (
     <div style={styles.container}>
-      <h1 style={styles.heading}>Welcome to Note!</h1>
-      <p style={styles.paragraph}>
-        We’re glad to have you here. Start jotting down your thoughts, ideas, and important notes. Your creativity is just a click away. Enjoy your note-taking experience!
-      </p>
-      <div>
-        <Link to="/signup" style={styles.link}>Sign Up</Link> | 
-        <Link to="/login" style={styles.link}> Login</Link>
+      <div style={styles.card}>
+        <h1 style={styles.heading}>Welcome to <span style={styles.brand}>Note</span>!</h1>
+        <p style={styles.paragraph}>
+          Capture your thoughts, ideas, and inspirations in one place. Stay organized, stay creative, and enjoy a seamless note-taking experience.
+        </p>
+        <div style={styles.buttonGroup}>
+          <Link to="/signup" style={{ ...styles.button, backgroundColor: '#4CAF50' }}>Sign Up</Link>
+          <Link to="/login" style={{ ...styles.button, backgroundColor: '#2196F3' }}>Login</Link>
+        </div>
       </div>
     </div>
   );
 };
 
-// Inline styles
 const styles = {
   container: {
+    display: 'flex',
+    height: '100vh',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'linear-gradient(135deg, #e0f7fa, #e8f5e9)',
+    fontFamily: 'Segoe UI, sans-serif',
+  },
+  card: {
+    backgroundColor: '#fff',
+    padding: '40px',
+    borderRadius: '12px',
+    boxShadow: '0px 6px 20px rgba(0, 0, 0, 0.1)',
     textAlign: 'center',
-    marginTop: '50px',
-    padding: '20px',
-    backgroundColor: '#f5f5f5',
-    borderRadius: '8px',
-    boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+    maxWidth: '500px',
   },
   heading: {
+    color: '#333',
+    fontSize: '2.5rem',
+    marginBottom: '20px',
+  },
+  brand: {
     color: '#4CAF50',
-    fontSize: '2.5em',
-    marginBottom: '15px',
   },
   paragraph: {
-    fontSize: '1.2em',
-    color: '#333',
+    fontSize: '1.1rem',
+    color: '#555',
+    marginBottom: '30px',
   },
-  link: {
-    color: '#4CAF50',
+  buttonGroup: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '20px',
+  },
+  button: {
+    padding: '12px 24px',
+    color: 'white',
     textDecoration: 'none',
     fontWeight: 'bold',
-    marginLeft: '10px',
+    borderRadius: '6px',
+    transition: 'background 0.3s ease',
   },
 };
 

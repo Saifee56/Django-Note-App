@@ -14,7 +14,6 @@ const Notes = () => {
         <Card to="/update-note" label="Update Note" />
         <Card to="/get-all-notes" label="View All Notes" />
         <Card to="/delete" label="Delete Note" />
-        <Card to="/admin-login" label="Login As Admin" />
       </div>
     </div>
   );

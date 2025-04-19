@@ -50,7 +50,6 @@ const Signup = () => {
         setError('Unexpected response from server.');
       }
     } catch (err) {
-      console.error('Signup error:', err.response?.data || err.message);
       const errorData = err.response?.data;
       if (typeof errorData === 'object') {
         const messages = Object.entries(errorData).map(([field, msg]) => `${field}: ${msg}`);
@@ -91,6 +90,13 @@ const Signup = () => {
       border: 'none',
       borderRadius: '4px',
       cursor: 'pointer',
+    },
+    adminLink: {
+      marginTop: '10px',
+      textAlign: 'center',
+      color: '#007bff',
+      cursor: 'pointer',
+      textDecoration: 'underline',
     },
     error: {
       color: 'red',

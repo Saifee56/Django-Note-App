@@ -34,6 +34,7 @@ const GetAllNotes = () => {
   };
 
   const handleShare = async (noteId, username, permission, resetForm) => {
+    console.log('noteId:', noteId);
     if (!username) {
       alert('Please enter a username to share with.');
       return;

@@ -99,7 +99,7 @@ const UpdateNote = () => {
       textAlign: 'center',
       fontSize: '2rem',
       marginBottom: '20px',
-      color: '#003366', // Dark Blue
+      color: '#003366', 
     },
     message: {
       color: 'red',

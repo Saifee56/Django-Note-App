@@ -1,6 +1,6 @@
-Project Title: Full-Featured Note-Taking Web Application
+**Project Title: Full-Featured Note-Taking Web Application**
 
-Description:
+**Description:**
 
 A robust and user-friendly note-taking web application built with Django (Backend) and React (Frontend). This application supports full CRUD operations for managing notes and features a modern admin dashboard for enhanced control and visibility.
 

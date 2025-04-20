@@ -49,3 +49,4 @@ class AdminPanelViewSet(viewsets.ViewSet):
         UserActivity.objects.create(user=request.user, activity_type='delete_note')
 
         return Response({"message": "Note deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    

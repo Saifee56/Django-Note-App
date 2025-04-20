@@ -22,13 +22,10 @@ class AdminPanelViewSetTests(APITestCase):
         self._auth_as(self.admin)
         resp = self.client.get('/admin_panel/admin-panel/all-notes/')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        # should return a list of two entries
         usernames = { entry['username'] for entry in resp.data }
         self.assertSetEqual(usernames, {'admin', 'jane'})
-        # check that each entry has a "notes" list
         for entry in resp.data:
             self.assertIn('notes', entry)
-            # ensure note IDs match
             if entry['username']=='admin':
                 self.assertEqual(entry['notes'][0]['id'], self.admin_note.id)
             else:

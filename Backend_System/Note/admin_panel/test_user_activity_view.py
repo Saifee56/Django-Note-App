@@ -31,24 +31,22 @@ class UserActivityViewSetTests(APITestCase):
         self.client = APIClient()
 
     def test_get_all_activities_as_admin(self):
-        # Authenticate as admin
         self.client.force_authenticate(user=self.admin_user)
 
         url = '/admin_panel/admin-user-activity/all/'
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Should return both activities
         self.assertIsInstance(response.data, list)
         self.assertEqual(len(response.data), 2)
-        # Verify that each entry has expected keys
+
         for entry in response.data:
             self.assertIn('user', entry)
             self.assertIn('activity_type', entry)
             self.assertIn('timestamp', entry)
 
     def test_get_all_activities_non_admin_forbidden(self):
-        # Authenticate as regular user
+
         self.client.force_authenticate(user=self.regular_user)
 
         url = '/admin_panel/admin-user-activity/all/'
@@ -57,10 +55,9 @@ class UserActivityViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_user_activities_as_admin(self):
-        # Authenticate as admin
+
         self.client.force_authenticate(user=self.admin_user)
 
-        # Fetch activities for regular_user
         url = f'/admin_panel/admin-user-activity/user-activities/{self.regular_user.username}/'
         response = self.client.get(url)
 
@@ -72,7 +69,6 @@ class UserActivityViewSetTests(APITestCase):
         self.assertEqual(response.data[0]['activity_type'], self.activity1.activity_type)
 
     def test_get_user_activities_non_admin_forbidden(self):
-        # Authenticate as regular_user
         self.client.force_authenticate(user=self.regular_user)
 
         url = f'/admin_panel/admin-user-activity/user-activities/{self.admin_user.username}/'
@@ -81,7 +77,6 @@ class UserActivityViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_user_activities_empty(self):
-        # New user with no activities
         new_user = User.objects.create_user(username='newuser', password='pass')
 
         self.client.force_authenticate(user=self.admin_user)
@@ -89,5 +84,4 @@ class UserActivityViewSetTests(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # Expect empty list
         self.assertEqual(response.data, [])

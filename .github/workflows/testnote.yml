@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Migrations
         run: |
-          cd backend
+          cd Backend_System
           python manage.py migrate
 
       - name: Run Tests

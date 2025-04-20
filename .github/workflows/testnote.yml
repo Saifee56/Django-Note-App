@@ -26,9 +26,9 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Migrations
-        working-directory: Backend_System/note
+        working-directory: Backend_System/Note
         run: python manage.py migrate
 
       - name: Run Tests
-        working-directory: Backend_System/note
+        working-directory: Backend_System/Note
         run: python manage.py test

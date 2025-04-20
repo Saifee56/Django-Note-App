@@ -62,10 +62,8 @@ class NoteViewset(viewsets.ViewSet):
     @action(detail=True, methods=['get'], url_path='detail')
     def get_single_note(self, request, pk=None):
         try:
-            # Try owner first
             note = Note.objects.get(pk=pk, user=request.user)
         except Note.DoesNotExist:
-            # If not owner, check shared
             try:
                 shared_note = SharedNote.objects.get(note_id=pk, shared_with=request.user)
                 note = shared_note.note

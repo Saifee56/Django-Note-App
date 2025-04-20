@@ -39,7 +39,7 @@ const CreateNote = () => {
   const styles = {
     page: {
       minHeight: '100vh',
-      backgroundColor: '#e6f2ff',   // very light blue
+      backgroundColor: '#e6f2ff',   
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',

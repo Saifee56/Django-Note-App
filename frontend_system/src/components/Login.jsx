@@ -26,8 +26,9 @@ function Login() {
 
       Cookies.set('access_token', tokens.access, { expires: 1 });
       Cookies.set('refresh_token', tokens.refresh, { expires: 7 });
+      const finalUsername = returnedUsername || username;
 
-      window.location.href = '/notes';
+      navigate('/notes');
     } catch (error) {
       if (error.response) {
         setMessage(error.response.data.detail || 'Login failed');
@@ -35,6 +36,7 @@ function Login() {
         setMessage('An error occurred. Please try again.');
       }
     }
+    localStorage.setItem('username', response.data.username);
   };
 
   const styles = {

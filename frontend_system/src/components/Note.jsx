@@ -45,6 +45,11 @@ const styles = {
     color: '#666',
     fontSize: '1rem',
   },
+  welcome: {
+    fontSize: '1.2rem',
+    color: '#333',
+    marginTop: '8px',
+  },
   grid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',

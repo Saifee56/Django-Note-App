@@ -6,8 +6,9 @@ import { useNavigate } from 'react-router-dom';
 const GetAllNotes = () => {
   const [notes, setNotes] = useState([]);
   const [message, setMessage] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const token = Cookies.get('access_token');
-  const navigate = useNavigate();  // to navigate when edit button is clicked
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchNotes();
@@ -19,13 +20,10 @@ const GetAllNotes = () => {
         setMessage('No access token found.');
         return;
       }
-      const { data } = await axios.get(
-        'http://127.0.0.1:8000/note/get-all/',
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
-      );
+      const { data } = await axios.get('http://127.0.0.1:8000/note/get-all/', {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      });
       setNotes(Array.isArray(data) ? data : data.notes);
     } catch (err) {
       console.error(err);
@@ -34,12 +32,11 @@ const GetAllNotes = () => {
   };
 
   const handleShare = async (noteId, username, permission, resetForm) => {
-    console.log('noteId:', noteId);
     if (!username) {
       alert('Please enter a username to share with.');
       return;
     }
-  
+
     try {
       const accessToken = Cookies.get('access_token');
       const resp = await axios.post(
@@ -56,7 +53,7 @@ const GetAllNotes = () => {
           withCredentials: true,
         }
       );
-  
+
       alert(resp.data.message || 'Note shared successfully!');
       resetForm();
     } catch (err) {
@@ -79,7 +76,7 @@ const GetAllNotes = () => {
     title: {
       textAlign: 'center',
       fontSize: '2rem',
-      marginBottom: '20px',
+      marginBottom: '10px',
     },
     message: {
       color: 'red',
@@ -144,7 +141,21 @@ const GetAllNotes = () => {
       color: '#777',
       width: '100%',
     },
+    searchBox: {
+      padding: '10px',
+      width: '300px',
+      borderRadius: '5px',
+      border: '1px solid #ccc',
+      fontSize: '1rem',
+      marginBottom: '20px',
+    },
   };
+
+  const filteredNotes = notes.filter(
+    (note) =>
+      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const NoteCard = ({ note, onShare, styles }) => {
     const [username, setUsername] = useState('');
@@ -156,7 +167,7 @@ const GetAllNotes = () => {
     };
 
     const handleEditClick = () => {
-      navigate(`/update-note/${note.id}`); 
+      navigate(`/update-note/${note.id}`);
     };
 
     return (
@@ -188,7 +199,6 @@ const GetAllNotes = () => {
           </button>
         </div>
 
-        {/* Edit Button */}
         <button
           style={{
             ...styles.shareBtn,
@@ -205,14 +215,24 @@ const GetAllNotes = () => {
 
   return (
     <div style={styles.container}>
-      <h2 style={styles.title}>All Notes</h2>
+      <div style={{ textAlign: 'center' }}>
+        <h2 style={styles.title}>All Notes</h2>
+        <input
+          type="text"
+          placeholder="Search notes..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={styles.searchBox}
+        />
+      </div>
+
       {message && <p style={styles.message}>{message}</p>}
 
-      {notes.length === 0 ? (
+      {filteredNotes.length === 0 ? (
         <p style={styles.noNotes}>No notes available.</p>
       ) : (
         <div style={styles.notesList}>
-          {notes.map((note) => (
+          {filteredNotes.map((note) => (
             <NoteCard
               key={note.id}
               note={note}

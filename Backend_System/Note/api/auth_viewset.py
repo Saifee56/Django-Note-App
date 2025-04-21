@@ -47,6 +47,7 @@ class UserAuthViewset(viewsets.ViewSet):
             return Response({
                 "message": "User logged in successfully",
                 "tokens": tokens,
+                "username":user.username
             }, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
